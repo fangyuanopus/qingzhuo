@@ -1,7 +1,8 @@
 {
-  "name": "qingzhuo-website",
+  "name": "qingzhuo-laundry-detergent",
   "private": true,
   "version": "0.1.0",
+  "description": "清濯 QINGZHUO 茶皂素复配深层洁净洗衣液官网",
   "type": "module",
   "scripts": {
     "dev": "vite",
