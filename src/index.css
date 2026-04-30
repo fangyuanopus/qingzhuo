@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 流体字体缩放：Utopia 标准 */
+    --step--2: clamp(0.75rem, 0.72rem + 0.14vw, 0.8rem);
+    --step--1: clamp(0.875rem, 0.83rem + 0.2vw, 1rem);
+    --step-0: clamp(1.125rem, 1.07rem + 0.23vw, 1.25rem);
+    --step-1: clamp(1.35rem, 1.24rem + 0.48vw, 1.5625rem);
+    --step-2: clamp(1.62rem, 1.45rem + 0.74vw, 1.953rem);
+    --step-3: clamp(1.94rem, 1.7rem + 1.05vw, 2.44rem);
+    --step-4: clamp(2.33rem, 2rem + 1.44vw, 3.05rem);
+    --step-5: clamp(2.8rem, 2.34rem + 2vw, 3.81rem);
+    --step-6: clamp(3.6rem, 2.8rem + 3.5vw, 5.5rem);
+
+    /* 亮色：高级灰绿 */
+    --background: 150 8% 97%;
+    --foreground: 155 10% 18%;
+    --card: 150 6% 95%;
+    --card-foreground: 155 10% 18%;
+    --popover: 150 8% 97%;
+    --popover-foreground: 155 10% 18%;
+    --primary: 155 10% 18%;
+    --primary-foreground: 150 8% 97%;
+    --secondary: 150 6% 93%;
+    --secondary-foreground: 155 8% 12%;
+    --muted: 150 6% 93%;
+    --muted-foreground: 155 4% 46%;
+    --accent: 155 18% 38%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 150 6% 88%;
+    --input: 150 6% 88%;
+    --ring: 155 18% 38%;
+    --radius: 0.75rem;
+    --hero-heading: 155 12% 14%;
+    --hero-sub: 155 5% 48%;
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+  }
+
+  .dark {
+    --background: 222 18% 6%;
+    --foreground: 210 12% 92%;
+    --card: 222 15% 9%;
+    --card-foreground: 210 12% 92%;
+    --popover: 222 15% 9%;
+    --popover-foreground: 210 12% 92%;
+    --primary: 210 12% 92%;
+    --primary-foreground: 222 18% 6%;
+    --secondary: 222 10% 12%;
+    --secondary-foreground: 210 12% 92%;
+    --muted: 222 10% 12%;
+    --muted-foreground: 215 8% 55%;
+    --accent: 215 40% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 63% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 10% 16%;
+    --input: 222 10% 16%;
+    --ring: 215 40% 58%;
+    --hero-heading: 210 12% 94%;
+    --hero-sub: 215 8% 55%;
+  }
+
+  * {
+    box-sizing: border-box;
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: hsl(var(--background));
+    overflow-x: hidden;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100dvh;
+    margin: 0;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    line-height: 1.7;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  @media (max-width: 640px) {
+    body {
+      min-width: 0;
+    }
+  }
+
+  #root {
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  main {
+    overflow-x: clip;
+  }
+
+  button, a {
+    font: inherit;
+  }
+
+  img, video {
+    max-width: 100%;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+  }
+
+  h1 { font-size: var(--step-6); }
+  h2 { font-size: var(--step-4); }
+  h3 { font-size: var(--step-2); }
+  h4 { font-size: var(--step-1); }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .text-step--2 { font-size: var(--step--2); }
+  .text-step--1 { font-size: var(--step--1); }
+  .text-step-0  { font-size: var(--step-0); }
+  .text-step-1  { font-size: var(--step-1); }
+  .text-step-2  { font-size: var(--step-2); }
+  .text-step-3  { font-size: var(--step-3); }
+  .text-step-4  { font-size: var(--step-4); }
+  .text-step-5  { font-size: var(--step-5); }
+  .text-step-6  { font-size: var(--step-6); }
+
+  .liquid-glass {
+    background: hsl(var(--card) / 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .dark .liquid-glass {
+    background: hsl(var(--card) / 0.5);
+    border-color: hsl(var(--border) / 0.4);
+  }
+
+  .hero-enter {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: heroEnter 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .hero-enter:nth-child(2) { animation-delay: 180ms; }
+  .hero-enter:nth-child(3) { animation-delay: 360ms; }
+  .hero-enter:nth-child(4) { animation-delay: 540ms; }
+
+  .section-breath {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  @media (min-width: 768px) {
+    .section-breath {
+      padding-top: 9rem;
+      padding-bottom: 9rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-breath {
+      padding-top: 11rem;
+      padding-bottom: 11rem;
+    }
+  }
+}
+
+/* ─── 导航栏毛玻璃 ─── */
+.nav-glass {
+  background: hsl(var(--background) / 0.82);
+  backdrop-filter: blur(20px) saturate(1.15);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  transition: background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease;
+}
+
+/* ─── 渐变文字 ─── */
+.text-gradient-green {
+  background: linear-gradient(135deg, hsl(155 18% 38%), hsl(165 22% 44%), hsl(145 15% 40%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .text-gradient-green {
+  background: linear-gradient(135deg, hsl(215 40% 58%), hsl(210 35% 65%), hsl(220 35% 55%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── 装饰性光斑 ─── */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.07;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.dark .glow-orb {
+  opacity: 0.04;
+}
+
+/* ─── 高级卡片 ─── */
+.card-premium {
+  position: relative;
+  background: hsl(var(--card));
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 1px 3px hsl(var(--foreground) / 0.04);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.card-premium:hover {
+  border-color: hsl(var(--foreground) / 0.12);
+  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.06);
+}
+
+/* ─── 区块交替背景 ─── */
+.section-alt {
+  background: hsl(var(--card) / 0.5);
+}
+
+.dark .section-alt {
+  background: hsl(var(--card) / 0.35);
+}
+
+/* ─── 图片 hover 缩放 ─── */
+.img-zoom {
+  overflow: hidden;
+}
+
+.img-zoom img {
+  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.img-zoom:hover img {
+  transform: scale(1.04);
+}
+
+/* ─── 按钮 hover 微光 ─── */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, hsl(var(--accent) / 0.25), transparent, hsl(var(--accent) / 0.2));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  filter: blur(10px);
+}
+
+.btn-glow:hover::before {
+  opacity: 1;
+}
+
+/* ─── 滚动进度条 ─── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, hsl(var(--accent)), hsl(var(--accent) / 0.5));
+  z-index: 100;
+  transition: width 0.1s linear;
+}
+
+@keyframes heroEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 滚动入场动画 */
+.animate-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.animate-in.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stagger-1 { transition-delay: 100ms; }
+.stagger-2 { transition-delay: 200ms; }
+.stagger-3 { transition-delay: 300ms; }
+.stagger-4 { transition-delay: 400ms; }
+.stagger-5 { transition-delay: 500ms; }
+.stagger-6 { transition-delay: 600ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+  }
+  .animate-in {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
