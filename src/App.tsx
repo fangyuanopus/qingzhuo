@@ -334,9 +334,10 @@ function Navbar({ dark, toggle, activeSection, scrolled }: { dark: boolean; togg
 
 function HeroSection({ dark, toggle, activeSection, scrolled }: { dark: boolean; toggle: () => void; activeSection: string; scrolled: boolean }) {
   const videoRef = useFadingVideo(0.72);
+  const heroStats = ['2kg 家庭装', '茶皂素复配', '低泡易漂洗'];
 
   return (
-    <section className="relative min-h-dvh overflow-hidden bg-background" id="brand">
+    <section className="hero-canvas relative min-h-dvh overflow-hidden bg-background" id="brand">
       <video
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover"
@@ -354,38 +355,55 @@ function HeroSection({ dark, toggle, activeSection, scrolled }: { dark: boolean;
       )}
       <Navbar dark={dark} toggle={toggle} activeSection={activeSection} scrolled={scrolled} />
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-86px)] w-full max-w-5xl flex-col items-center justify-center px-6 pb-24 pt-20 text-center">
-        <p className="hero-enter liquid-glass inline-flex items-center rounded-full px-6 py-3 font-body text-step--1 tracking-wider text-hero-sub">
-          <span className="mr-2.5 inline-block size-1.5 rounded-full bg-accent" aria-hidden="true" />
-          茶皂素复配洗衣液
-        </p>
+      <div className="relative z-10 mx-auto grid min-h-[calc(100dvh-86px)] w-full max-w-7xl items-center gap-12 px-6 pb-24 pt-28 md:grid-cols-[0.95fr_1.05fr] md:px-10 lg:gap-16">
+        <div className="hero-copy text-left">
+          <p className="hero-enter eyebrow-pill">
+            <span className="mr-2.5 inline-block size-1.5 rounded-full bg-accent" aria-hidden="true" />
+            茶皂素复配深层洁净洗衣液
+          </p>
 
-        <h1 className="hero-enter font-display mt-12 max-w-4xl text-balance text-step-6 font-normal text-gradient-green">
-          洗得干净，
-          <br />
-          也洗得轻盈。
-        </h1>
+          <h1 className="hero-enter mt-10 max-w-4xl text-balance font-display text-step-6 font-normal text-gradient-green">
+            清洁有度，
+            <br />
+            衣物如新。
+          </h1>
 
-        <p className="hero-enter mt-8 max-w-md font-body text-step-0 leading-8 text-foreground/50">
-          深层洁净，护色护纤。<br className="hidden sm:block" />
-          以茶皂素为灵感的科学配方。
-        </p>
+          <p className="hero-enter mt-7 max-w-xl font-body text-step-0 leading-8 text-foreground/60">
+            从植物茶皂素汲取灵感，以实验室配方平衡洁净力、柔和触感与留香表现，让日常洗护更轻盈。
+          </p>
 
-        <div className="hero-enter mt-14 flex w-full max-w-sm flex-col justify-center gap-4 sm:flex-row">
-          <Button className="btn-glow h-auto rounded-full px-8 py-4" onClick={() => scrollToSection('products')} type="button" variant="hero">
-            探索产品
-            <ArrowRight aria-hidden="true" className="ml-2 size-4" />
-          </Button>
-          <Button className="btn-glow h-auto rounded-full px-8 py-4" onClick={() => scrollToSection('formula')} type="button" variant="heroSecondary">
-            配方详情
-          </Button>
+          <div className="hero-enter mt-11 flex w-full flex-col gap-4 sm:max-w-md sm:flex-row">
+            <Button className="btn-glow h-auto rounded-full px-8 py-4" onClick={() => scrollToSection('products')} type="button" variant="hero">
+              探索产品
+              <ArrowRight aria-hidden="true" className="ml-2 size-4" />
+            </Button>
+            <Button className="btn-glow h-auto rounded-full px-8 py-4" onClick={() => scrollToSection('formula')} type="button" variant="heroSecondary">
+              查看配方
+            </Button>
+          </div>
+        </div>
+
+        <div className="hero-enter hero-product-stage" aria-label="清濯洗衣液主视觉">
+          <div className="hero-product-backdrop" aria-hidden="true" />
+          <div className="hero-product-card">
+            <span className="product-edition">QINGZHUO / DAILY CARE</span>
+            <img
+              alt="清濯茶皂素复配深层洁净洗衣液"
+              className="hero-product-bottle"
+              src={dark ? asset('product-front-transparent.png') : asset('product-front-with-bg.png')}
+            />
+          </div>
+          <div className="hero-side-note">
+            <span>BOTANICAL FORMULA</span>
+            <strong>洁净力与轻柔感并重</strong>
+          </div>
         </div>
       </div>
 
       <div className="relative z-10 border-t border-foreground/8 bg-background/60 backdrop-blur-sm">
         <div className="mx-auto grid max-w-5xl md:grid-cols-3">
-          {['2kg', '机洗 / 手洗', '茶皂素'].map((value, i) => (
-            <div className={`px-8 py-10 text-center ${i < 2 ? 'border-foreground/8 md:border-r' : ''}`} key={value}>
+          {heroStats.map((value, i) => (
+            <div className={`px-8 py-9 text-center ${i < 2 ? 'border-foreground/8 md:border-r' : ''}`} key={value}>
               <strong className="block font-display text-step-4 font-normal text-foreground/80">{value}</strong>
             </div>
           ))}
@@ -394,7 +412,6 @@ function HeroSection({ dark, toggle, activeSection, scrolled }: { dark: boolean;
     </section>
   );
 }
-
 function ProofMarquee() {
   return (
     <section className="relative w-full overflow-hidden border-y border-foreground/8 bg-background py-8">
@@ -517,17 +534,22 @@ function LogoSection({ dark }: { dark: boolean }) {
 }
 
 function ProductSection({ dark }: { dark: boolean }) {
+  const [featuredProduct, ...supportProducts] = products;
+
   return (
     <section className="section-breath relative section-alt px-6 md:px-10" id="products">
       <div className="glow-orb right-[-5%] top-[20%] h-[350px] w-[350px] bg-teal-300" aria-hidden="true" />
       <div className="mx-auto max-w-6xl">
         <AnimateIn>
-          <div className="mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
               <p className="font-body text-step--1 font-medium tracking-wider uppercase text-accent">Our Product</p>
               <h2 className="font-display mt-3 max-w-3xl text-balance text-step-4 font-normal text-foreground">
-                三款产品，三种表达。
+                一支主推款，撑起清洁与洗护的日常仪式。
               </h2>
+              <p className="mt-5 max-w-2xl font-body text-step-0 leading-8 text-muted-foreground">
+                产品区改为主次分明的陈列，让包装、容量和配方卖点先被看见，再展开不同视觉版本。
+              </p>
             </div>
             <Button className="h-auto self-start rounded-full px-5 py-2.5 md:self-auto" onClick={() => scrollToSection('scenes')} type="button" variant="heroSecondary">
               看使用场景
@@ -535,11 +557,36 @@ function ProductSection({ dark }: { dark: boolean }) {
           </div>
         </AnimateIn>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {products.map((product, i) => (
+        {featuredProduct && (
+          <AnimateIn>
+            <article className="product-hero-card">
+              <div className={`product-hero-visual ${dark ? 'product-hero-visual-dark' : ''}`}>
+                <img
+                  alt={`清濯${featuredProduct.name}`}
+                  className="product-hero-image"
+                  loading="lazy"
+                  src={dark ? featuredProduct.imageDark : featuredProduct.imageLight}
+                />
+              </div>
+              <div className="product-hero-copy">
+                <p className="font-body text-step--1 font-medium tracking-wider text-accent uppercase">Signature Bottle</p>
+                <h3 className="mt-4 font-display text-step-3 font-normal text-foreground">{featuredProduct.name}</h3>
+                <p className="mt-4 font-body text-step-0 leading-8 text-muted-foreground">{featuredProduct.text}</p>
+                <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                  {['深层洁净', '护色护纤', '持久留香'].map((item) => (
+                    <span className="product-proof-chip" key={item}>{item}</span>
+                  ))}
+                </div>
+              </div>
+            </article>
+          </AnimateIn>
+        )}
+
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+          {supportProducts.map((product, i) => (
             <AnimateIn key={product.name} delay={i + 1}>
-              <article className="card-premium group text-card-foreground">
-                <div className={`img-zoom flex h-80 items-center justify-center p-8 ${dark ? 'bg-gradient-to-br from-slate-900 via-slate-950 to-black' : 'bg-gradient-to-br from-emerald-50/50 to-teal-50/30'}`}>
+              <article className="product-support-card group text-card-foreground">
+                <div className={`img-zoom product-support-visual ${dark ? 'bg-gradient-to-br from-slate-900 via-slate-950 to-black' : 'bg-gradient-to-br from-emerald-50/50 to-teal-50/30'}`}>
                   <img
                     alt={`清濯${product.name}`}
                     className="h-full w-full object-contain transition-transform duration-700 group-hover:scale-[1.02]"
@@ -560,7 +607,6 @@ function ProductSection({ dark }: { dark: boolean }) {
     </section>
   );
 }
-
 function ImageMarquee() {
   return (
     <section className="overflow-hidden bg-background py-8" aria-label="清濯产品素材图带">
@@ -580,25 +626,36 @@ function ImageMarquee() {
 }
 
 function BenefitsSection({ dark }: { dark: boolean }) {
+  const benefitProofs = ['洁净力可视化', '低泡好漂洗', '织物触感柔和', '留香克制清新'];
+
   return (
     <section className="section-breath relative bg-background px-6 md:px-10" id="benefits">
       <div className="glow-orb left-[5%] top-[30%] h-[300px] w-[300px] bg-emerald-200" aria-hidden="true" />
       <div className="mx-auto max-w-6xl">
         <AnimateIn>
-          <div className="mx-auto mb-12 max-w-2xl text-center">
-            <p className="font-body text-step--1 font-medium tracking-wider uppercase text-accent">Core Benefits</p>
-            <h2 className="font-display mt-3 text-balance text-step-4 font-normal text-foreground">四个卖点，每张海报都是完整故事。</h2>
-            <p className="font-body mt-4 text-step-0 leading-7 text-muted-foreground">海报本身已承载主视觉与卖点文案，这里完整呈现，不再裁切叠加。</p>
+          <div className="mb-12 grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-end">
+            <div>
+              <p className="font-body text-step--1 font-medium tracking-wider uppercase text-accent">Core Benefits</p>
+              <h2 className="font-display mt-3 text-balance text-step-4 font-normal text-foreground">把卖点变成可感知的洗护证据。</h2>
+            </div>
+            <p className="font-body text-step-0 leading-8 text-muted-foreground">
+              不再平均堆叠海报，而是用画册式留白和证据标签，把“洁净、柔护、留香”串成一套更可信的品牌叙事。
+            </p>
           </div>
         </AnimateIn>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="benefit-proof-bar">
+          {benefitProofs.map((proof) => (
+            <span key={proof}>{proof}</span>
+          ))}
+        </div>
+        <div className="mt-7 grid gap-6 md:grid-cols-2">
           {benefitCards.map((card, i) => (
             <AnimateIn key={card.title} delay={i + 1}>
-              <article className="card-premium group">
-                <div className={`overflow-hidden ${dark ? 'bg-slate-950' : 'bg-gray-50/50'}`}>
+              <article className={`benefit-card group ${i === 0 ? 'md:row-span-2' : ''}`}>
+                <div className={`benefit-image-wrap ${dark ? 'bg-slate-950' : 'bg-gray-50/50'}`}>
                   <img
                     alt={`清濯${card.title}卖点海报`}
-                    className="block h-auto w-full object-contain transition-transform duration-700 group-hover:scale-[1.01]"
+                    className="block h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.01]"
                     loading="lazy"
                     src={card.image}
                   />
@@ -615,7 +672,6 @@ function BenefitsSection({ dark }: { dark: boolean }) {
     </section>
   );
 }
-
 function FormulaSection() {
   return (
     <section className="section-breath relative section-alt px-6 md:px-10" id="formula">
