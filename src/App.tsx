@@ -554,10 +554,10 @@ function ProductSection({ dark }: { dark: boolean }) {
                 />
               </div>
               <div className="product-hero-copy">
-                <p className="font-body text-step--1 font-medium tracking-wider text-accent uppercase">Signature Bottle</p>
-                <h3 className="mt-4 font-display text-step-3 font-normal text-foreground">{featuredProduct.name}</h3>
-                <p className="mt-4 font-body text-step-0 leading-8 text-muted-foreground">{featuredProduct.text}</p>
-                <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                <p className="product-copy-eyebrow">Signature Bottle</p>
+                <h3 className="product-title">{featuredProduct.name}</h3>
+                <p className="product-description">{featuredProduct.text}</p>
+                <div className="product-proof-grid">
                   {['深层洁净', '护色护纤', '持久留香'].map((item) => (
                     <span className="product-proof-chip" key={item}>{item}</span>
                   ))}
