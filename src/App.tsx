@@ -355,8 +355,8 @@ function HeroSection({ dark, toggle, activeSection, scrolled }: { dark: boolean;
       )}
       <Navbar dark={dark} toggle={toggle} activeSection={activeSection} scrolled={scrolled} />
 
-      <div className="relative z-10 mx-auto grid min-h-[calc(100dvh-86px)] w-full max-w-7xl items-center gap-12 px-6 pb-24 pt-28 md:grid-cols-[0.95fr_1.05fr] md:px-10 lg:gap-16">
-        <div className="hero-copy text-left">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-86px)] w-full max-w-5xl flex-col items-center justify-center px-6 pb-24 pt-28 text-center md:px-10">
+        <div className="hero-copy text-center">
           <p className="hero-enter eyebrow-pill">
             <span className="mr-2.5 inline-block size-1.5 rounded-full bg-accent" aria-hidden="true" />
             茶皂素复配深层洁净洗衣液
@@ -372,7 +372,7 @@ function HeroSection({ dark, toggle, activeSection, scrolled }: { dark: boolean;
             从植物茶皂素汲取灵感，以实验室配方平衡洁净力、柔和触感与留香表现，让日常洗护更轻盈。
           </p>
 
-          <div className="hero-enter mt-11 flex w-full flex-col gap-4 sm:max-w-md sm:flex-row">
+          <div className="hero-enter mx-auto mt-11 flex w-full flex-col justify-center gap-4 sm:max-w-md sm:flex-row">
             <Button className="btn-glow h-auto rounded-full px-8 py-4" onClick={() => scrollToSection('products')} type="button" variant="hero">
               探索产品
               <ArrowRight aria-hidden="true" className="ml-2 size-4" />
@@ -383,21 +383,6 @@ function HeroSection({ dark, toggle, activeSection, scrolled }: { dark: boolean;
           </div>
         </div>
 
-        <div className="hero-enter hero-product-stage" aria-label="清濯洗衣液主视觉">
-          <div className="hero-product-backdrop" aria-hidden="true" />
-          <div className="hero-product-card">
-            <span className="product-edition">QINGZHUO / DAILY CARE</span>
-            <img
-              alt="清濯茶皂素复配深层洁净洗衣液"
-              className="hero-product-bottle"
-              src={dark ? asset('product-front-transparent.png') : asset('product-front-with-bg.png')}
-            />
-          </div>
-          <div className="hero-side-note">
-            <span>BOTANICAL FORMULA</span>
-            <strong>洁净力与轻柔感并重</strong>
-          </div>
-        </div>
       </div>
 
       <div className="relative z-10 border-t border-foreground/8 bg-background/60 backdrop-blur-sm">

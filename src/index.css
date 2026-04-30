@@ -45,27 +45,27 @@
   }
 
   .dark {
-    --background: 178 30% 5%;
-    --foreground: 150 14% 92%;
-    --card: 178 24% 8%;
-    --card-foreground: 150 14% 92%;
-    --popover: 178 24% 8%;
-    --popover-foreground: 150 14% 92%;
-    --primary: 150 14% 92%;
-    --primary-foreground: 178 30% 5%;
-    --secondary: 178 18% 12%;
-    --secondary-foreground: 150 14% 92%;
-    --muted: 178 18% 12%;
-    --muted-foreground: 160 8% 58%;
-    --accent: 184 42% 62%;
+    --background: 224 28% 6%;
+    --foreground: 214 18% 94%;
+    --card: 224 22% 9%;
+    --card-foreground: 214 18% 94%;
+    --popover: 224 22% 9%;
+    --popover-foreground: 214 18% 94%;
+    --primary: 214 18% 94%;
+    --primary-foreground: 224 28% 6%;
+    --secondary: 224 18% 13%;
+    --secondary-foreground: 214 18% 94%;
+    --muted: 224 18% 13%;
+    --muted-foreground: 214 10% 62%;
+    --accent: 198 78% 72%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 63% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 178 13% 17%;
-    --input: 178 13% 17%;
-    --ring: 184 42% 62%;
+    --border: 220 15% 18%;
+    --input: 220 15% 18%;
+    --ring: 198 78% 72%;
     --hero-heading: 210 12% 94%;
-    --hero-sub: 215 8% 55%;
+    --hero-sub: 205 22% 72%;
   }
 
   * {
@@ -196,7 +196,7 @@
 /* ─── 导航栏毛玻璃 ─── */
 .dark body {
   background:
-    linear-gradient(180deg, hsl(var(--background)), hsl(178 26% 7%)),
+    linear-gradient(180deg, hsl(var(--background)), hsl(224 24% 8%)),
     hsl(var(--background));
 }
 
@@ -234,108 +234,6 @@
 
 .hero-copy {
   padding-top: 2rem;
-}
-
-.hero-product-stage {
-  position: relative;
-  min-height: min(680px, 72vh);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-product-backdrop {
-  position: absolute;
-  width: min(72vw, 560px);
-  aspect-ratio: 1;
-  border-radius: 42% 58% 52% 48%;
-  background:
-    linear-gradient(145deg, hsl(155 32% 88% / 0.9), hsl(190 20% 95% / 0.56)),
-    radial-gradient(circle at 42% 34%, hsl(0 0% 100% / 0.72), transparent 42%);
-  filter: saturate(0.92);
-  transform: rotate(-8deg);
-  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.74), 0 34px 90px hsl(166 25% 20% / 0.14);
-}
-
-.dark .hero-product-backdrop {
-  background:
-    linear-gradient(145deg, hsl(184 28% 18% / 0.75), hsl(178 24% 8% / 0.62)),
-    radial-gradient(circle at 42% 34%, hsl(184 48% 70% / 0.24), transparent 42%);
-  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08), 0 34px 110px hsl(184 48% 28% / 0.18);
-}
-
-.hero-product-card {
-  position: relative;
-  display: flex;
-  min-height: 520px;
-  width: min(88vw, 520px);
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 1px solid hsl(var(--border) / 0.72);
-  border-radius: 2rem;
-  background:
-    linear-gradient(180deg, hsl(var(--card) / 0.78), hsl(var(--card) / 0.52)),
-    linear-gradient(135deg, hsl(0 0% 100% / 0.62), transparent);
-  box-shadow: 0 42px 90px hsl(164 24% 18% / 0.16);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.dark .hero-product-card {
-  background:
-    linear-gradient(180deg, hsl(var(--card) / 0.66), hsl(var(--card) / 0.42)),
-    linear-gradient(135deg, hsl(184 38% 72% / 0.08), transparent);
-  box-shadow: 0 42px 110px hsl(0 0% 0% / 0.36);
-}
-
-.product-edition {
-  position: absolute;
-  left: 1.5rem;
-  top: 1.5rem;
-  color: hsl(var(--foreground) / 0.36);
-  font-family: var(--font-body);
-  font-size: var(--step--2);
-  font-weight: 600;
-  letter-spacing: 0.16em;
-}
-
-.hero-product-bottle {
-  width: min(78%, 390px);
-  max-height: 520px;
-  object-fit: contain;
-  transform: translateY(12px);
-  filter: drop-shadow(0 28px 34px hsl(166 20% 18% / 0.24));
-}
-
-.hero-side-note {
-  position: absolute;
-  right: -0.6rem;
-  bottom: 4.4rem;
-  max-width: 13rem;
-  border: 1px solid hsl(var(--border) / 0.68);
-  border-radius: 1.25rem;
-  background: hsl(var(--background) / 0.78);
-  padding: 1rem 1.1rem;
-  box-shadow: 0 24px 56px hsl(var(--foreground) / 0.1);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-.hero-side-note span {
-  display: block;
-  color: hsl(var(--accent));
-  font-size: var(--step--2);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-
-.hero-side-note strong {
-  display: block;
-  margin-top: 0.45rem;
-  color: hsl(var(--foreground) / 0.78);
-  font-size: var(--step--1);
-  line-height: 1.6;
 }
 
 .product-hero-card {
@@ -465,7 +363,7 @@
 }
 
 .dark .text-gradient-green {
-  background: linear-gradient(135deg, hsl(150 14% 94%), hsl(184 42% 62%), hsl(160 24% 76%));
+  background: linear-gradient(135deg, hsl(214 18% 96%), hsl(198 78% 72%), hsl(228 30% 84%));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
