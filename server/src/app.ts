@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import { config } from './config';
 import { errorHandler, notFoundHandler } from './http/errors';
+import { adminOrdersRouter } from './modules/admin/adminOrders.routes';
 import { adminAuthRouter } from './modules/admin/auth.routes';
 import { ordersRouter } from './modules/orders/orders.routes';
 import { paymentMethodsRouter } from './modules/payments/paymentMethods.routes';
@@ -21,6 +22,7 @@ export function createApp() {
   app.use('/api/payment-methods', paymentMethodsRouter);
   app.use('/api/orders', ordersRouter);
   app.use('/api/admin', adminAuthRouter);
+  app.use('/api/admin/orders', adminOrdersRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
