@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum SkuStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID_CONFIRMED
+  SHIPPING
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethodType {
+  WECHAT
+  ALIPAY
+}
+
+enum AdminRole {
+  OWNER
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  status      ProductStatus @default(ACTIVE)
+  skus        Sku[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("products")
+}
+
+model Sku {
+  id                 String      @id @default(cuid())
+  productId          String
+  product            Product     @relation(fields: [productId], references: [id])
+  name               String
+  spec               String
+  priceCents         Int
+  originalPriceCents Int?
+  stock              Int         @default(0)
+  imageUrl           String?
+  status             SkuStatus   @default(ACTIVE)
+  orderItems         OrderItem[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([productId])
+  @@map("skus")
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  address   String
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([phone])
+  @@map("customers")
+}
+
+model Order {
+  id               String           @id @default(cuid())
+  orderNo          String           @unique
+  customerId       String
+  customer         Customer         @relation(fields: [customerId], references: [id])
+  status           OrderStatus      @default(PENDING_PAYMENT)
+  totalAmountCents Int
+  paymentMethod    PaymentMethodType?
+  shippingCarrier  String?
+  trackingNo       String?
+  remark           String?
+  items            OrderItem[]
+  statusLogs       OrderStatusLog[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  skuId          String
+  sku            Sku      @relation(fields: [skuId], references: [id])
+  skuNameSnapshot String
+  unitPriceCents Int
+  quantity       Int
+  subtotalCents  Int
+
+  @@index([orderId])
+  @@index([skuId])
+  @@map("order_items")
+}
+
+model PaymentMethod {
+  id           String            @id @default(cuid())
+  type         PaymentMethodType
+  name         String
+  qrCodeUrl    String
+  instructions String
+  enabled      Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([enabled])
+  @@map("payment_methods")
+}
+
+model AdminUser {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  passwordHash String
+  displayName  String
+  role         AdminRole        @default(OWNER)
+  statusLogs   OrderStatusLog[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@map("admin_users")
+}
+
+model OrderStatusLog {
+  id         String       @id @default(cuid())
+  orderId    String
+  order      Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  operatorId String?
+  operator   AdminUser?   @relation(fields: [operatorId], references: [id])
+  note       String?
+  createdAt  DateTime     @default(now())
+
+  @@index([orderId])
+  @@index([operatorId])
+  @@map("order_status_logs")
+}
