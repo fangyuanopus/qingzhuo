@@ -11,10 +11,12 @@ import { prisma } from './db';
 export const testAdminPassword = 'change-this-password';
 
 export async function resetDatabase(db: PrismaClient = prisma) {
+  await db.auditLog.deleteMany();
   await db.orderStatusLog.deleteMany();
   await db.orderItem.deleteMany();
   await db.order.deleteMany();
   await db.customer.deleteMany();
+  await db.customerAddress.deleteMany();
   await db.customerAccount.deleteMany();
   await db.paymentMethod.deleteMany();
   await db.sku.deleteMany();

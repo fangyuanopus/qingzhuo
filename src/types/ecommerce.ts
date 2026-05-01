@@ -89,3 +89,13 @@ export type CustomerOrder = {
     createdAt: string;
   }>;
 };
+
+export type CustomerAddress = {
+  id: string;
+  receiverName: string;
+  phone: string;
+  address: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+};

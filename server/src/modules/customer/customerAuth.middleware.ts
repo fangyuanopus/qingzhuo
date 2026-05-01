@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
+import { customerCookieName, readCookieToken } from '../../http/authCookies';
 import { HttpError } from '../../http/errors';
 import { getCustomerById, verifyCustomerToken } from './customerAuth.service';
 
@@ -14,7 +15,9 @@ export type CustomerRequest = Request & {
 
 function readBearerToken(req: Request) {
   const header = req.header('authorization');
-  return header?.startsWith('Bearer ') ? header.slice('Bearer '.length) : undefined;
+  return header?.startsWith('Bearer ')
+    ? header.slice('Bearer '.length)
+    : readCookieToken(req, customerCookieName);
 }
 
 export async function optionalCustomer(req: Request, _res: Response, next: NextFunction) {

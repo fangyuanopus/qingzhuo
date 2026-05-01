@@ -5,6 +5,25 @@ export type AdminUser = {
   email: string;
   displayName: string;
   role?: string;
+  status?: string;
+  mustChangePassword?: boolean;
+  lastLoginAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type AuditLog = {
+  id: string;
+  action: string;
+  targetType: string;
+  targetId: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+  actorAdmin: {
+    id: string;
+    email: string;
+    displayName: string;
+  } | null;
 };
 
 export type AdminOrderSummary = {

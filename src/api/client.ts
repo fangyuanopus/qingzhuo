@@ -32,6 +32,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
     ...options,
     headers,
     body,
+    credentials: options.credentials ?? 'include',
   });
 
   if (response.status === 204) {

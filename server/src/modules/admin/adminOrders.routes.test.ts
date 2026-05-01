@@ -114,4 +114,15 @@ describe('admin orders API', () => {
     expect(response.status).toBe(400);
     expect(response.body.error).toContain('Invalid order status transition');
   });
+
+  it('does not allow admins to create purchase orders', async () => {
+    const token = await adminToken();
+
+    const response = await request(createApp())
+      .post('/api/admin/orders')
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(405);
+  });
 });

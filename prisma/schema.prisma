@@ -33,6 +33,26 @@ enum PaymentMethodType {
 
 enum AdminRole {
   OWNER
+  STAFF
+}
+
+enum AdminStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum CustomerStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum AuditAction {
+  ADMIN_LOGIN
+  ADMIN_USER_CREATED
+  ADMIN_USER_UPDATED
+  ADMIN_PASSWORD_RESET
+  ORDER_STATUS_UPDATED
+  ORDER_SHIPPING_UPDATED
 }
 
 model Product {
@@ -80,25 +100,47 @@ model Customer {
 }
 
 model CustomerAccount {
-  id           String   @id @default(cuid())
-  name         String
-  phone        String   @unique
-  passwordHash String
-  orders       Order[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                     String            @id @default(cuid())
+  name                   String
+  phone                  String            @unique
+  passwordHash           String
+  status                 CustomerStatus    @default(ACTIVE)
+  failedLoginAttempts    Int               @default(0)
+  lockedUntil            DateTime?
+  lastLoginAt            DateTime?
+  passwordResetTokenHash String?
+  passwordResetExpiresAt DateTime?
+  orders                 Order[]
+  addresses              CustomerAddress[]
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
 
   @@map("customer_accounts")
 }
 
+model CustomerAddress {
+  id           String          @id @default(cuid())
+  userId       String
+  user         CustomerAccount @relation(fields: [userId], references: [id], onDelete: Cascade)
+  receiverName String
+  phone        String
+  address      String
+  isDefault    Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([userId])
+  @@map("customer_addresses")
+}
+
 model Order {
-  id               String           @id @default(cuid())
-  orderNo          String           @unique
+  id               String             @id @default(cuid())
+  orderNo          String             @unique
   customerId       String
-  customer         Customer         @relation(fields: [customerId], references: [id])
+  customer         Customer           @relation(fields: [customerId], references: [id])
   userId           String?
-  user             CustomerAccount? @relation(fields: [userId], references: [id])
-  status           OrderStatus      @default(PENDING_PAYMENT)
+  user             CustomerAccount?   @relation(fields: [userId], references: [id])
+  status           OrderStatus        @default(PENDING_PAYMENT)
   totalAmountCents Int
   paymentMethod    PaymentMethodType?
   shippingCarrier  String?
@@ -106,8 +148,8 @@ model Order {
   remark           String?
   items            OrderItem[]
   statusLogs       OrderStatusLog[]
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
 
   @@index([customerId])
   @@index([userId])
@@ -117,15 +159,15 @@ model Order {
 }
 
 model OrderItem {
-  id             String   @id @default(cuid())
-  orderId        String
-  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  skuId          String
-  sku            Sku      @relation(fields: [skuId], references: [id])
+  id              String @id @default(cuid())
+  orderId         String
+  order           Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  skuId           String
+  sku             Sku    @relation(fields: [skuId], references: [id])
   skuNameSnapshot String
-  unitPriceCents Int
-  quantity       Int
-  subtotalCents  Int
+  unitPriceCents  Int
+  quantity        Int
+  subtotalCents   Int
 
   @@index([orderId])
   @@index([skuId])
@@ -147,16 +189,39 @@ model PaymentMethod {
 }
 
 model AdminUser {
-  id           String           @id @default(cuid())
-  email        String           @unique
-  passwordHash String
-  displayName  String
-  role         AdminRole        @default(OWNER)
-  statusLogs   OrderStatusLog[]
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  id                  String           @id @default(cuid())
+  email               String           @unique
+  passwordHash        String
+  displayName         String
+  role                AdminRole        @default(OWNER)
+  status              AdminStatus      @default(ACTIVE)
+  mustChangePassword  Boolean          @default(false)
+  failedLoginAttempts Int              @default(0)
+  lockedUntil         DateTime?
+  lastLoginAt         DateTime?
+  statusLogs          OrderStatusLog[]
+  auditLogs           AuditLog[]       @relation("AdminAuditLogs")
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 
   @@map("admin_users")
+}
+
+model AuditLog {
+  id           String      @id @default(cuid())
+  action       AuditAction
+  actorAdminId String?
+  actorAdmin   AdminUser?  @relation("AdminAuditLogs", fields: [actorAdminId], references: [id])
+  targetType   String
+  targetId     String?
+  metadataJson String?
+  createdAt    DateTime    @default(now())
+
+  @@index([action])
+  @@index([actorAdminId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
 
 model OrderStatusLog {

@@ -8,10 +8,13 @@ async function main() {
   const adminEmail = process.env.ADMIN_EMAIL ?? 'admin@qingzhuo.local';
   const adminPassword = process.env.ADMIN_PASSWORD ?? 'change-this-password';
 
+  await prisma.auditLog.deleteMany();
   await prisma.orderStatusLog.deleteMany();
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.customer.deleteMany();
+  await prisma.customerAddress.deleteMany();
+  await prisma.customerAccount.deleteMany();
   await prisma.paymentMethod.deleteMany();
   await prisma.sku.deleteMany();
   await prisma.product.deleteMany();

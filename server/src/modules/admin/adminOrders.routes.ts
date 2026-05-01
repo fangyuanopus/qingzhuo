@@ -17,6 +17,10 @@ export const adminOrdersRouter = Router();
 
 adminOrdersRouter.use(requireAdmin);
 
+adminOrdersRouter.post('/', (_req, res) => {
+  res.status(405).json({ error: 'Admins cannot create purchase orders' });
+});
+
 adminOrdersRouter.get(
   '/',
   asyncHandler(async (req, res) => {

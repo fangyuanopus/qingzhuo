@@ -1,4 +1,4 @@
-import { OrderStatus, Prisma } from '@prisma/client';
+import { AuditAction, OrderStatus, Prisma } from '@prisma/client';
 import { prisma } from '../../db';
 import { HttpError } from '../../http/errors';
 import type {
@@ -133,6 +133,16 @@ export async function updateAdminOrderStatus(
       },
     });
 
+    await tx.auditLog.create({
+      data: {
+        action: AuditAction.ORDER_STATUS_UPDATED,
+        actorAdminId: operatorId,
+        targetType: 'Order',
+        targetId: id,
+        metadataJson: JSON.stringify({ from: order.status, to: input.status }),
+      },
+    });
+
     return updated;
   });
 }
@@ -170,6 +180,19 @@ export async function updateAdminOrderShipping(
         toStatus: OrderStatus.SHIPPING,
         operatorId,
         note: input.note ?? `发货：${input.shippingCarrier} ${input.trackingNo}`,
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        action: AuditAction.ORDER_SHIPPING_UPDATED,
+        actorAdminId: operatorId,
+        targetType: 'Order',
+        targetId: id,
+        metadataJson: JSON.stringify({
+          shippingCarrier: input.shippingCarrier,
+          trackingNo: input.trackingNo,
+        }),
       },
     });
 
