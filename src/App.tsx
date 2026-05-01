@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { ArrowRight, Sun, Moon, Menu, X, ChevronDown, Star, ShieldCheck, Leaf, FlaskConical, BadgeCheck, ShoppingBag } from 'lucide-react';
 import { Button } from './components/ui/button';
+import { ApiError } from './api/client';
+import { fetchProducts } from './api/products';
+import { createOrder as submitOrder } from './api/orders';
+import type { CreateOrderResponse, Sku } from './types/ecommerce';
 
 const asset = (name: string) => `/assets/qingzhuo/${name}`;
 const logoUrl = asset('logo-transparent.png');
@@ -671,7 +675,153 @@ function SafetySection() {
   );
 }
 
+const formatMoney = (cents: number) => `¥${(cents / 100).toFixed(2)}`;
+
+function OrderDialog({ sku, onClose }: { sku: Sku; onClose: () => void }) {
+  const [quantity, setQuantity] = useState(1);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [remark, setRemark] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [result, setResult] = useState<CreateOrderResponse | null>(null);
+  const total = sku.priceCents * quantity;
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const response = await submitOrder({
+        skuId: sku.id,
+        quantity,
+        customer: { name, phone, address },
+        remark: remark || undefined,
+      });
+      setResult(response);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '订单提交失败，请稍后再试');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0b1f1a]/55 px-4 py-6 backdrop-blur-sm">
+      <section className="relative max-h-[92dvh] w-full max-w-3xl overflow-y-auto rounded-[28px] border border-white/30 bg-background p-6 shadow-[0_36px_120px_rgba(0,0,0,0.25)] md:p-8">
+        <button
+          aria-label="关闭下单窗口"
+          className="absolute right-4 top-4 inline-flex size-10 items-center justify-center rounded-full bg-foreground/5 text-foreground/60 transition hover:bg-foreground/10 hover:text-foreground"
+          onClick={onClose}
+          type="button"
+        >
+          <X className="size-4" />
+        </button>
+
+        {!result ? (
+          <form onSubmit={handleSubmit}>
+            <p className="font-body text-step--1 font-medium tracking-wider uppercase text-accent">Create Order</p>
+            <h2 className="mt-3 font-display text-step-4 font-normal text-foreground">确认购买信息</h2>
+            <div className="mt-6 rounded-2xl border border-foreground/8 bg-card/60 p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="font-body text-step-1 font-semibold text-foreground">{sku.name}</p>
+                  <p className="mt-1 font-body text-step--1 text-muted-foreground">{sku.spec} · 库存 {sku.stock}</p>
+                </div>
+                <strong className="font-display text-step-4 font-normal text-foreground">{formatMoney(total)}</strong>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <label className="grid gap-2 font-body text-step--1 font-medium text-foreground/70">
+                数量
+                <input className="h-12 rounded-xl border border-foreground/10 bg-white/75 px-4 font-body text-step-0 outline-none transition focus:border-accent dark:bg-white/10" max={Math.min(99, sku.stock)} min={1} onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))} type="number" value={quantity} />
+              </label>
+              <label className="grid gap-2 font-body text-step--1 font-medium text-foreground/70">
+                收货人
+                <input className="h-12 rounded-xl border border-foreground/10 bg-white/75 px-4 font-body text-step-0 outline-none transition focus:border-accent dark:bg-white/10" onChange={(event) => setName(event.target.value)} required value={name} />
+              </label>
+              <label className="grid gap-2 font-body text-step--1 font-medium text-foreground/70">
+                手机号
+                <input className="h-12 rounded-xl border border-foreground/10 bg-white/75 px-4 font-body text-step-0 outline-none transition focus:border-accent dark:bg-white/10" onChange={(event) => setPhone(event.target.value)} required value={phone} />
+              </label>
+              <label className="grid gap-2 font-body text-step--1 font-medium text-foreground/70 md:col-span-2">
+                收货地址
+                <input className="h-12 rounded-xl border border-foreground/10 bg-white/75 px-4 font-body text-step-0 outline-none transition focus:border-accent dark:bg-white/10" onChange={(event) => setAddress(event.target.value)} required value={address} />
+              </label>
+              <label className="grid gap-2 font-body text-step--1 font-medium text-foreground/70 md:col-span-2">
+                备注
+                <textarea className="min-h-24 rounded-xl border border-foreground/10 bg-white/75 px-4 py-3 font-body text-step-0 outline-none transition focus:border-accent dark:bg-white/10" onChange={(event) => setRemark(event.target.value)} value={remark} />
+              </label>
+            </div>
+
+            {error && <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 font-body text-step--1 text-red-700">{error}</p>}
+
+            <Button className="mt-7 h-12 w-full rounded-full" disabled={submitting || sku.stock <= 0} type="submit" variant="hero">
+              <ShoppingBag className="mr-2 size-4" />
+              {submitting ? '提交中...' : '提交订单并查看收款码'}
+            </Button>
+          </form>
+        ) : (
+          <div>
+            <p className="font-body text-step--1 font-medium tracking-wider uppercase text-accent">Payment</p>
+            <h2 className="mt-3 font-display text-step-4 font-normal text-foreground">订单已创建</h2>
+            <div className="mt-5 rounded-2xl border border-accent/20 bg-accent/10 p-5">
+              <p className="font-body text-step--1 text-muted-foreground">订单号</p>
+              <p className="mt-1 break-all font-body text-step-1 font-semibold text-foreground">{result.orderNo}</p>
+              <p className="mt-4 font-display text-step-4 font-normal text-foreground">{formatMoney(result.totalAmountCents)}</p>
+            </div>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              {result.paymentMethods.map((method) => (
+                <article className="rounded-2xl border border-foreground/8 bg-card/60 p-5" key={method.id}>
+                  <p className="font-body text-step-0 font-semibold text-foreground">{method.name}</p>
+                  <img className="mt-4 aspect-square w-32 rounded-xl border border-foreground/10 bg-white object-contain p-3" src={method.qrCodeUrl} alt={method.name} />
+                  <p className="mt-4 font-body text-step--1 leading-7 text-muted-foreground">{method.instructions}</p>
+                </article>
+              ))}
+            </div>
+            <p className="mt-5 rounded-xl bg-foreground/[0.04] px-4 py-3 font-body text-step--1 leading-7 text-muted-foreground">
+              扫码付款后，管理员会在后台人工确认付款并安排发货。你可以保存订单号用于后续查询。
+            </p>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
 function PlansSection() {
+  const [skus, setSkus] = useState<Sku[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [selectedSku, setSelectedSku] = useState<Sku | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      setLoading(true);
+      setLoadError('');
+      try {
+        const response = await fetchProducts();
+        if (!cancelled) setSkus(response.products.flatMap((product) => product.skus));
+      } catch {
+        if (!cancelled) setLoadError('暂时无法连接商品库存，价格区展示为静态参考。');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void loadProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const cards = skus.length > 0 ? skus : planCards;
+
   return (
     <section className="section-breath relative section-alt px-6 md:px-10" id="plans">
       <div className="mx-auto max-w-6xl">
@@ -684,31 +834,37 @@ function PlansSection() {
             </p>
           </div>
         </AnimateIn>
+        {loadError && <p className="mb-5 text-center font-body text-step--1 text-red-700">{loadError}</p>}
         <div className="grid gap-5 md:grid-cols-3">
-          {planCards.map((plan, i) => (
-            <AnimateIn key={plan.name} delay={i + 1}>
+          {cards.map((plan, i) => {
+            const sku = 'priceCents' in plan ? plan : null;
+            const fallback = planCards[i] ?? planCards[0];
+            return (
+            <AnimateIn key={sku?.id ?? fallback.name} delay={i + 1}>
               <article className={`card-premium relative flex flex-col p-8 ${i === 1 ? 'border-accent/40 shadow-[0_24px_62px_hsl(var(--accent)/0.12)]' : ''}`}>
-                {plan.badge && (
+                {fallback.badge && (
                   <span className="absolute right-5 top-5 inline-flex items-center rounded-full bg-accent/10 px-3 py-1 font-body text-step--2 font-semibold tracking-wide text-accent">
-                    {plan.badge}
+                    {fallback.badge}
                   </span>
                 )}
-                <p className="font-body text-step-1 font-medium tracking-wide text-accent">{plan.name}</p>
-                <p className="font-body mt-1 text-step--2 text-muted-foreground/60">{plan.spec}</p>
+                <p className="font-body text-step-1 font-medium tracking-wide text-accent">{sku?.name ?? fallback.name}</p>
+                <p className="font-body mt-1 text-step--2 text-muted-foreground/60">{sku?.spec ?? fallback.spec}</p>
                 <div className="mt-6 flex items-baseline gap-3">
-                  <strong className="font-display text-step-5 font-normal text-foreground">{plan.price}</strong>
-                  {plan.originalPrice && (
-                    <span className="font-body text-step--1 text-muted-foreground/50 line-through">{plan.originalPrice}</span>
+                  <strong className="font-display text-step-5 font-normal text-foreground">{sku ? formatMoney(sku.priceCents) : fallback.price}</strong>
+                  {(sku?.originalPriceCents || fallback.originalPrice) && (
+                    <span className="font-body text-step--1 text-muted-foreground/50 line-through">{sku?.originalPriceCents ? formatMoney(sku.originalPriceCents) : fallback.originalPrice}</span>
                   )}
                 </div>
-                <p className="font-body mt-6 flex-1 text-step-0 leading-7 text-muted-foreground">{plan.text}</p>
-                <Button className="btn-glow mt-8 h-auto w-full rounded-full px-6 py-3" type="button" variant={i === 1 ? 'hero' : 'heroSecondary'}>
+                <p className="font-body mt-6 flex-1 text-step-0 leading-7 text-muted-foreground">{fallback.text}</p>
+                {sku && <p className="mt-4 font-body text-step--2 text-muted-foreground/60">实时库存：{sku.stock}</p>}
+                <Button className="btn-glow mt-8 h-auto w-full rounded-full px-6 py-3" disabled={loading || (sku ? sku.stock <= 0 : true)} onClick={() => sku && setSelectedSku(sku)} type="button" variant={i === 1 ? 'hero' : 'heroSecondary'} aria-label={loading ? '加载库存中' : sku?.stock === 0 ? '暂时缺货' : '立即购买'}>
                   <ShoppingBag className="mr-2 size-4" />
                   立即购买
                 </Button>
               </article>
             </AnimateIn>
-          ))}
+            );
+          })}
         </div>
 
         {/* 售后保障条 */}
@@ -721,6 +877,7 @@ function PlansSection() {
           ))}
         </div>
       </div>
+      {selectedSku && <OrderDialog onClose={() => setSelectedSku(null)} sku={selectedSku} />}
     </section>
   );
 }
