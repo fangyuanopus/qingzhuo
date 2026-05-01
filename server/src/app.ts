@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import { config } from './config';
 import { errorHandler, notFoundHandler } from './http/errors';
+import { ordersRouter } from './modules/orders/orders.routes';
 import { paymentMethodsRouter } from './modules/payments/paymentMethods.routes';
 import { productsRouter } from './modules/products/products.routes';
 
@@ -17,6 +18,7 @@ export function createApp() {
 
   app.use('/api/products', productsRouter);
   app.use('/api/payment-methods', paymentMethodsRouter);
+  app.use('/api/orders', ordersRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
