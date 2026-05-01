@@ -13,7 +13,7 @@ function createOrderNo() {
   return `QZ${date}${random}`;
 }
 
-export async function createOrder(input: CreateOrderInput) {
+export async function createOrder(input: CreateOrderInput, userId?: string) {
   const order = await prisma.$transaction(async (tx) => {
     const sku = await tx.sku.findUnique({
       where: { id: input.skuId },
@@ -54,6 +54,7 @@ export async function createOrder(input: CreateOrderInput) {
       data: {
         orderNo,
         customerId: customer.id,
+        userId,
         status: OrderStatus.PENDING_PAYMENT,
         totalAmountCents: subtotalCents,
         remark: input.remark,

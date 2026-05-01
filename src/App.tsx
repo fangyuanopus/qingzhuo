@@ -4,7 +4,9 @@ import { Button } from './components/ui/button';
 import { ApiError } from './api/client';
 import { fetchProducts } from './api/products';
 import { createOrder as submitOrder } from './api/orders';
-import type { CreateOrderResponse, Sku } from './types/ecommerce';
+import { CustomerAuthDialog } from './customer/CustomerAuthDialog';
+import { CustomerOrdersDialog } from './customer/CustomerOrdersDialog';
+import type { CreateOrderResponse, CustomerSession, Sku } from './types/ecommerce';
 
 const asset = (name: string) => `/assets/qingzhuo/${name}`;
 const logoUrl = asset('logo-transparent.png');
@@ -242,7 +244,25 @@ function AnimateIn({ children, className = '', delay = 0 }: { children: React.Re
 
 // ─── 页面组件 ────────────────────────────────────────────────────────
 
-function Navbar({ dark, toggle, activeSection, scrolled }: { dark: boolean; toggle: () => void; activeSection: string; scrolled: boolean }) {
+function Navbar({
+  dark,
+  toggle,
+  activeSection,
+  scrolled,
+  customerSession,
+  onOpenCustomerAuth,
+  onOpenCustomerOrders,
+  onCustomerLogout,
+}: {
+  dark: boolean;
+  toggle: () => void;
+  activeSection: string;
+  scrolled: boolean;
+  customerSession: CustomerSession | null;
+  onOpenCustomerAuth: () => void;
+  onOpenCustomerOrders: () => void;
+  onCustomerLogout: () => void;
+}) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleNav = (target: string) => {
@@ -282,6 +302,23 @@ function Navbar({ dark, toggle, activeSection, scrolled }: { dark: boolean; togg
         </div>
 
         <div className="flex items-center gap-1">
+          {customerSession ? (
+            <>
+              <button className="hidden rounded-full px-4 py-2 font-body text-step--1 text-foreground/65 transition hover:bg-foreground/5 hover:text-foreground md:inline-flex" onClick={onOpenCustomerOrders} type="button">
+                {customerSession.user.name} · 我的订单
+              </button>
+              <button className="hidden rounded-full px-3 py-2 font-body text-step--1 text-foreground/45 transition hover:text-foreground md:inline-flex" onClick={onCustomerLogout} type="button">
+                退出
+              </button>
+            </>
+          ) : (
+            <button className="hidden rounded-full px-4 py-2 font-body text-step--1 text-foreground/65 transition hover:bg-foreground/5 hover:text-foreground md:inline-flex" onClick={onOpenCustomerAuth} type="button">
+              用户注册/登录
+            </button>
+          )}
+          <button className="hidden rounded-full px-4 py-2 font-body text-step--1 text-foreground/65 transition hover:bg-foreground/5 hover:text-foreground md:inline-flex" onClick={() => { window.location.href = '/admin'; }} type="button">
+            管理员登录
+          </button>
           <button
             aria-label={dark ? '切换为日间模式' : '切换为夜间模式'}
             className="inline-flex size-10 items-center justify-center rounded-full text-foreground/60 transition-colors duration-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -324,6 +361,53 @@ function Navbar({ dark, toggle, activeSection, scrolled }: { dark: boolean; togg
                 {item.label}
               </button>
             ))}
+            <div className="mt-2 border-t border-foreground/10 pt-3">
+              {customerSession ? (
+                <>
+                  <button
+                    className="flex w-full items-center justify-between py-3 text-left font-body text-step-0 text-foreground/70 transition hover:text-foreground"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      onOpenCustomerOrders();
+                    }}
+                    type="button"
+                  >
+                    <span>{customerSession.user.name} · 我的订单</span>
+                  </button>
+                  <button
+                    className="flex w-full items-center py-3 text-left font-body text-step-0 text-foreground/50 transition hover:text-foreground"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      onCustomerLogout();
+                    }}
+                    type="button"
+                  >
+                    退出登录
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="flex w-full items-center py-3 text-left font-body text-step-0 text-foreground/70 transition hover:text-foreground"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    onOpenCustomerAuth();
+                  }}
+                  type="button"
+                >
+                  用户注册/登录
+                </button>
+              )}
+              <button
+                className="flex w-full items-center py-3 text-left font-body text-step-0 text-foreground/70 transition hover:text-foreground"
+                onClick={() => {
+                  setMobileOpen(false);
+                  window.location.href = '/admin';
+                }}
+                type="button"
+              >
+                管理员登录
+              </button>
+            </div>
             <Button className="mt-3 h-auto rounded-full px-6 py-2.5 text-step--1 tracking-wider font-body" onClick={() => handleNav('plans')} type="button" variant="heroSecondary">
               立即购买
             </Button>
@@ -334,7 +418,25 @@ function Navbar({ dark, toggle, activeSection, scrolled }: { dark: boolean; togg
   );
 }
 
-function HeroSection({ dark, toggle, activeSection, scrolled }: { dark: boolean; toggle: () => void; activeSection: string; scrolled: boolean }) {
+function HeroSection({
+  dark,
+  toggle,
+  activeSection,
+  scrolled,
+  customerSession,
+  onOpenCustomerAuth,
+  onOpenCustomerOrders,
+  onCustomerLogout,
+}: {
+  dark: boolean;
+  toggle: () => void;
+  activeSection: string;
+  scrolled: boolean;
+  customerSession: CustomerSession | null;
+  onOpenCustomerAuth: () => void;
+  onOpenCustomerOrders: () => void;
+  onCustomerLogout: () => void;
+}) {
   const videoRef = useFadingVideo(0.72);
   const heroStats = ['一瓶盖洗一桶', '天然茶皂素配方', '低泡无残留'];
 
@@ -362,7 +464,16 @@ function HeroSection({ dark, toggle, activeSection, scrolled }: { dark: boolean;
           <div className="hero-light-orb hero-light-orb-3" aria-hidden="true" />
         </>
       )}
-      <Navbar dark={dark} toggle={toggle} activeSection={activeSection} scrolled={scrolled} />
+      <Navbar
+        dark={dark}
+        toggle={toggle}
+        activeSection={activeSection}
+        scrolled={scrolled}
+        customerSession={customerSession}
+        onOpenCustomerAuth={onOpenCustomerAuth}
+        onOpenCustomerOrders={onOpenCustomerOrders}
+        onCustomerLogout={onCustomerLogout}
+      />
 
       <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-86px)] w-full max-w-5xl flex-col items-center justify-center px-6 pb-16 pt-24 text-center md:px-10">
         <div className="hero-copy text-center">
@@ -677,7 +788,7 @@ function SafetySection() {
 
 const formatMoney = (cents: number) => `¥${(cents / 100).toFixed(2)}`;
 
-function OrderDialog({ sku, onClose }: { sku: Sku; onClose: () => void }) {
+function OrderDialog({ sku, customerSession, onClose }: { sku: Sku; customerSession: CustomerSession | null; onClose: () => void }) {
   const [quantity, setQuantity] = useState(1);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -694,12 +805,15 @@ function OrderDialog({ sku, onClose }: { sku: Sku; onClose: () => void }) {
     setError('');
 
     try {
-      const response = await submitOrder({
-        skuId: sku.id,
-        quantity,
-        customer: { name, phone, address },
-        remark: remark || undefined,
-      });
+      const response = await submitOrder(
+        {
+          skuId: sku.id,
+          quantity,
+          customer: { name, phone, address },
+          remark: remark || undefined,
+        },
+        customerSession?.token,
+      );
       setResult(response);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : '订单提交失败，请稍后再试');
@@ -792,7 +906,7 @@ function OrderDialog({ sku, onClose }: { sku: Sku; onClose: () => void }) {
   );
 }
 
-function PlansSection() {
+function PlansSection({ customerSession }: { customerSession: CustomerSession | null }) {
   const [skus, setSkus] = useState<Sku[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
@@ -877,7 +991,7 @@ function PlansSection() {
           ))}
         </div>
       </div>
-      {selectedSku && <OrderDialog onClose={() => setSelectedSku(null)} sku={selectedSku} />}
+      {selectedSku && <OrderDialog customerSession={customerSession} onClose={() => setSelectedSku(null)} sku={selectedSku} />}
     </section>
   );
 }
@@ -1163,26 +1277,74 @@ function MobileStickyBar({ scrolled }: { scrolled: boolean }) {
 // ─── 根组件 ──────────────────────────────────────────────────────────
 
 const sectionIds = ['brand', 'products', 'safety', 'how-it-works', 'formula', 'plans', 'reviews', 'faq'];
+const customerSessionKey = 'qingzhuo-customer-session';
+
+function loadCustomerSession() {
+  if (typeof window === 'undefined') return null;
+  const raw = sessionStorage.getItem(customerSessionKey);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as CustomerSession;
+  } catch {
+    sessionStorage.removeItem(customerSessionKey);
+    return null;
+  }
+}
 
 function App() {
   const { dark, toggle } = useDarkMode();
   const activeSection = useScrollSpy(sectionIds);
   const { scrolled, progress } = useScrollProgress();
+  const [customerSession, setCustomerSession] = useState<CustomerSession | null>(() => loadCustomerSession());
+  const [customerAuthOpen, setCustomerAuthOpen] = useState(false);
+  const [customerOrdersOpen, setCustomerOrdersOpen] = useState(false);
+
+  const handleCustomerAuthenticated = (session: CustomerSession) => {
+    sessionStorage.setItem(customerSessionKey, JSON.stringify(session));
+    setCustomerSession(session);
+  };
+
+  const handleCustomerLogout = () => {
+    sessionStorage.removeItem(customerSessionKey);
+    setCustomerSession(null);
+    setCustomerOrdersOpen(false);
+  };
 
   return (
     <main>
       <div className="scroll-progress" style={{ width: `${progress}%` }} aria-hidden="true" />
-      <HeroSection dark={dark} toggle={toggle} activeSection={activeSection} scrolled={scrolled} />
+      <HeroSection
+        dark={dark}
+        toggle={toggle}
+        activeSection={activeSection}
+        scrolled={scrolled}
+        customerSession={customerSession}
+        onOpenCustomerAuth={() => setCustomerAuthOpen(true)}
+        onOpenCustomerOrders={() => setCustomerOrdersOpen(true)}
+        onCustomerLogout={handleCustomerLogout}
+      />
       <ProductSection dark={dark} />
       <SafetySection />
       <HowItWorksSection />
       <FormulaSection />
-      <PlansSection />
+      <PlansSection customerSession={customerSession} />
       <ReviewsSection />
       <FAQSection />
       <CTASection />
       <Footer />
       <MobileStickyBar scrolled={scrolled} />
+      {customerAuthOpen && (
+        <CustomerAuthDialog
+          onAuthenticated={handleCustomerAuthenticated}
+          onClose={() => setCustomerAuthOpen(false)}
+        />
+      )}
+      {customerOrdersOpen && customerSession && (
+        <CustomerOrdersDialog
+          onClose={() => setCustomerOrdersOpen(false)}
+          token={customerSession.token}
+        />
+      )}
     </main>
   );
 }

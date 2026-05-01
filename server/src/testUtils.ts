@@ -15,6 +15,7 @@ export async function resetDatabase(db: PrismaClient = prisma) {
   await db.orderItem.deleteMany();
   await db.order.deleteMany();
   await db.customer.deleteMany();
+  await db.customerAccount.deleteMany();
   await db.paymentMethod.deleteMany();
   await db.sku.deleteMany();
   await db.product.deleteMany();
