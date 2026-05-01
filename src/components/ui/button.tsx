@@ -13,8 +13,8 @@ const buttonVariants = cva(
       },
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        hero: 'bg-primary text-primary-foreground rounded-full px-6 py-3 text-base font-semibold hover:bg-primary/90',
-        heroSecondary: 'liquid-glass text-foreground rounded-full px-6 py-3 text-base font-semibold hover:bg-white/5',
+        hero: 'rounded-full px-6 py-3 text-base font-semibold !text-white bg-[#14332d] hover:bg-[#1a4039]',
+        heroSecondary: 'rounded-full px-6 py-3 text-base font-semibold text-foreground border border-foreground/15 bg-white/50 hover:bg-white/70',
         ghost: 'text-foreground/60 hover:text-foreground',
       },
     },

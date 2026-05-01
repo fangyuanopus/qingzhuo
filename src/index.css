@@ -232,24 +232,18 @@
   box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.38);
 }
 
-.hero-canvas::before {
+.dark .hero-canvas::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(115deg, hsl(var(--background) / 0.96) 0%, hsl(var(--background) / 0.72) 42%, transparent 70%),
-    repeating-linear-gradient(90deg, hsl(var(--foreground) / 0.035) 0 1px, transparent 1px 92px);
-}
-
-.dark .hero-canvas::before {
   background:
     linear-gradient(115deg, hsl(var(--background) / 0.82) 0%, hsl(var(--background) / 0.62) 44%, transparent 72%),
     repeating-linear-gradient(90deg, hsl(var(--foreground) / 0.04) 0 1px, transparent 1px 92px);
 }
 
 .hero-copy {
-  padding-top: 2rem;
+  padding-top: 1rem;
 }
 
 .section-breath h2 {
@@ -322,7 +316,7 @@ footer .uppercase,
 .product-hero-visual {
   position: relative;
   display: flex;
-  min-height: 31rem;
+  min-height: 28rem;
   align-items: center;
   justify-content: center;
   background:
@@ -341,7 +335,7 @@ footer .uppercase,
 }
 
 .product-hero-image {
-  max-height: 28rem;
+  max-height: 26rem;
   width: 100%;
   object-fit: contain;
   filter: drop-shadow(0 28px 34px hsl(var(--foreground) / 0.18));
@@ -595,6 +589,98 @@ footer .uppercase,
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ─── 白天模式落地页动画 ─── */
+@keyframes floatOrb1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -40px) scale(1.08); }
+  50% { transform: translate(-20px, -70px) scale(0.95); }
+  75% { transform: translate(40px, -20px) scale(1.05); }
+}
+
+@keyframes floatOrb2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-40px, 30px) scale(1.1); }
+  66% { transform: translate(20px, -50px) scale(0.92); }
+}
+
+@keyframes floatOrb3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  20% { transform: translate(50px, 20px) scale(1.06); }
+  40% { transform: translate(-30px, -40px) scale(0.96); }
+  60% { transform: translate(20px, -60px) scale(1.04); }
+  80% { transform: translate(-40px, 30px) scale(0.98); }
+}
+
+.hero-light-orb {
+  position: absolute;
+  z-index: 2;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  filter: blur(80px);
+}
+
+.hero-light-orb-1 {
+  width: 600px;
+  height: 600px;
+  top: -15%;
+  right: -10%;
+  background: radial-gradient(circle, hsl(160 40% 65% / 0.5), transparent 65%);
+  animation: floatOrb1 18s ease-in-out infinite;
+}
+
+.hero-light-orb-2 {
+  width: 550px;
+  height: 550px;
+  bottom: -5%;
+  left: -12%;
+  background: radial-gradient(circle, hsl(174 35% 70% / 0.45), transparent 65%);
+  animation: floatOrb2 22s ease-in-out infinite;
+}
+
+.hero-light-orb-3 {
+  width: 500px;
+  height: 500px;
+  top: 20%;
+  left: 30%;
+  background: radial-gradient(circle, hsl(150 32% 72% / 0.38), transparent 65%);
+  animation: floatOrb3 26s ease-in-out infinite;
+}
+
+.hero-light-grid {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    hsl(160 12% 50% / 0.06) 0 1px,
+    transparent 1px 80px
+  ),
+  repeating-linear-gradient(
+    0deg,
+    hsl(160 12% 50% / 0.05) 0 1px,
+    transparent 1px 80px
+  );
+}
+
+@keyframes heroLightGradient {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.9; }
+}
+
+.hero-light-gradient {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 20% 10%, hsl(155 35% 70% / 0.55), transparent 45%),
+    radial-gradient(ellipse at 80% 90%, hsl(170 30% 74% / 0.45), transparent 45%),
+    radial-gradient(ellipse at 50% 50%, hsl(160 22% 82% / 0.35), transparent 55%);
+  animation: heroLightGradient 12s ease-in-out infinite;
 }
 
 /* 滚动入场动画 */
