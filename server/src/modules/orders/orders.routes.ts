@@ -17,6 +17,6 @@ ordersRouter.post(
 ordersRouter.get(
   '/:orderNo',
   asyncHandler(async (req, res) => {
-    res.json({ order: await getOrderByOrderNo(req.params.orderNo) });
+    res.json({ order: await getOrderByOrderNo(String(req.params.orderNo)) });
   }),
 );

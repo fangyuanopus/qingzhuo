@@ -28,7 +28,7 @@ adminOrdersRouter.get(
 adminOrdersRouter.get(
   '/:id',
   asyncHandler(async (req, res) => {
-    res.json({ order: await getAdminOrderDetail(req.params.id) });
+    res.json({ order: await getAdminOrderDetail(String(req.params.id)) });
   }),
 );
 
@@ -36,7 +36,7 @@ adminOrdersRouter.patch(
   '/:id/status',
   asyncHandler(async (req, res) => {
     const input = updateOrderStatusSchema.parse(req.body);
-    const order = await updateAdminOrderStatus(req.params.id, input, (req as AdminRequest).admin.id);
+    const order = await updateAdminOrderStatus(String(req.params.id), input, (req as AdminRequest).admin.id);
     res.json({ order });
   }),
 );
@@ -45,7 +45,7 @@ adminOrdersRouter.patch(
   '/:id/shipping',
   asyncHandler(async (req, res) => {
     const input = updateShippingSchema.parse(req.body);
-    const order = await updateAdminOrderShipping(req.params.id, input, (req as AdminRequest).admin.id);
+    const order = await updateAdminOrderShipping(String(req.params.id), input, (req as AdminRequest).admin.id);
     res.json({ order });
   }),
 );
