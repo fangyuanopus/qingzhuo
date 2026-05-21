@@ -115,6 +115,27 @@ describe('admin orders API', () => {
     expect(response.body.error).toContain('Invalid order status transition');
   });
 
+  it('requires shipping details before moving an order to shipping', async () => {
+    const { order } = await seedPendingOrder();
+    const token = await adminToken();
+    const app = createApp();
+
+    const paid = await request(app)
+      .patch(`/api/admin/orders/${order.id}/status`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: OrderStatus.PAID_CONFIRMED });
+
+    expect(paid.status).toBe(200);
+
+    const response = await request(app)
+      .patch(`/api/admin/orders/${order.id}/status`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ status: OrderStatus.SHIPPING });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toContain('Use the shipping endpoint');
+  });
+
   it('does not allow admins to create purchase orders', async () => {
     const token = await adminToken();
 

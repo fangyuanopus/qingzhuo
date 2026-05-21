@@ -3,7 +3,12 @@ import request from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createApp } from '../../app';
 import { prisma } from '../../db';
-import { resetDatabase, seedPaymentMethods, seedProduct } from '../../testUtils';
+import {
+  resetDatabase,
+  seedPaymentMethods,
+  seedPendingOrder,
+  seedProduct,
+} from '../../testUtils';
 
 describe('orders API', () => {
   beforeEach(async () => {
@@ -106,5 +111,23 @@ describe('orders API', () => {
 
     expect(response.status).toBe(400);
     expect(response.body.error).toBe('Validation failed');
+  });
+
+  it('returns only non-sensitive order details for public order lookup', async () => {
+    const { order } = await seedPendingOrder();
+
+    const response = await request(createApp()).get(`/api/orders/${order.orderNo}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.order).toMatchObject({
+      orderNo: order.orderNo,
+      status: OrderStatus.PENDING_PAYMENT,
+      totalAmountCents: order.totalAmountCents,
+    });
+    expect(response.body.order.items).toHaveLength(1);
+    expect(response.body.order.customer).toBeUndefined();
+    expect(response.body.order.customerPhone).toBeUndefined();
+    expect(response.body.order.customerAddress).toBeUndefined();
+    expect(response.body.order.statusLogs).toBeUndefined();
   });
 });

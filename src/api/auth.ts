@@ -1,7 +1,7 @@
 import { apiRequest } from './client';
 import type { CustomerSession } from '../types/ecommerce';
 
-const mockEnabled = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API !== 'false';
+const mockEnabled = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API === 'true';
 
 function mockCustomerSession(input: { name?: string; phone: string }): CustomerSession {
   return {

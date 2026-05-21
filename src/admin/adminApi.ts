@@ -1,8 +1,16 @@
 import { apiRequest } from '../api/client';
 import type { OrderStatus } from '../types/ecommerce';
-import type { AdminOrderDetail, AdminOrderSummary, AdminUser, AuditLog } from './adminTypes';
+import type {
+  AdminOrderDetail,
+  AdminOrderSummary,
+  AdminPaymentMethod,
+  AdminProduct,
+  AdminSku,
+  AdminUser,
+  AuditLog,
+} from './adminTypes';
 
-const mockEnabled = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API !== 'false';
+const mockEnabled = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API === 'true';
 
 function mockAdminSession(email: string) {
   return {
@@ -259,5 +267,104 @@ export function fetchAuditLogs(token: string) {
     if (!mockEnabled) throw error;
     console.warn('Using mock audit logs because API failed.', error);
     return { logs: mockAuditLogs };
+  });
+}
+
+export function fetchAdminProducts(token: string) {
+  return apiRequest<{ products: AdminProduct[] }>('/api/admin/products', { token });
+}
+
+export function createAdminProduct(
+  token: string,
+  input: {
+    name: string;
+    description?: string | null;
+    status?: 'ACTIVE' | 'INACTIVE';
+    skus: Array<{
+      name: string;
+      spec: string;
+      priceCents: number;
+      originalPriceCents?: number | null;
+      stock: number;
+      imageUrl?: string | null;
+      status?: 'ACTIVE' | 'INACTIVE';
+    }>;
+  },
+) {
+  return apiRequest<{ product: AdminProduct }>('/api/admin/products', {
+    method: 'POST',
+    token,
+    body: input,
+  });
+}
+
+export function updateAdminProduct(
+  token: string,
+  id: string,
+  input: { name?: string; description?: string | null; status?: 'ACTIVE' | 'INACTIVE' },
+) {
+  return apiRequest<{ product: AdminProduct }>(`/api/admin/products/${id}`, {
+    method: 'PATCH',
+    token,
+    body: input,
+  });
+}
+
+export function updateAdminSku(
+  token: string,
+  id: string,
+  input: {
+    name?: string;
+    spec?: string;
+    priceCents?: number;
+    originalPriceCents?: number | null;
+    stock?: number;
+    imageUrl?: string | null;
+    status?: 'ACTIVE' | 'INACTIVE';
+  },
+) {
+  return apiRequest<{ sku: AdminSku }>(`/api/admin/products/skus/${id}`, {
+    method: 'PATCH',
+    token,
+    body: input,
+  });
+}
+
+export function fetchAdminPaymentMethods(token: string) {
+  return apiRequest<{ paymentMethods: AdminPaymentMethod[] }>('/api/admin/payment-methods', { token });
+}
+
+export function createAdminPaymentMethod(
+  token: string,
+  input: {
+    type: 'WECHAT' | 'ALIPAY';
+    name: string;
+    qrCodeUrl: string;
+    instructions: string;
+    enabled?: boolean;
+  },
+) {
+  return apiRequest<{ paymentMethod: AdminPaymentMethod }>('/api/admin/payment-methods', {
+    method: 'POST',
+    token,
+    body: input,
+  });
+}
+
+export function updateAdminPaymentMethod(
+  token: string,
+  id: string,
+  input: {
+    type?: 'WECHAT' | 'ALIPAY';
+    name?: string;
+    qrCodeUrl?: string;
+    instructions?: string;
+    enabled?: boolean;
+  },
+) {
+  return apiRequest<{ paymentMethod: AdminPaymentMethod }>(`/api/admin/payment-methods/${id}`, {
+    method: 'PATCH',
+    token,
+    body: input,
   });
 }

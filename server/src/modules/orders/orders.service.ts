@@ -98,10 +98,22 @@ export async function createOrder(input: CreateOrderInput, userId?: string) {
 export async function getOrderByOrderNo(orderNo: string) {
   const order = await prisma.order.findUnique({
     where: { orderNo },
-    include: {
-      customer: true,
-      items: true,
-      statusLogs: { orderBy: { createdAt: 'asc' } },
+    select: {
+      orderNo: true,
+      status: true,
+      totalAmountCents: true,
+      shippingCarrier: true,
+      trackingNo: true,
+      createdAt: true,
+      updatedAt: true,
+      items: {
+        select: {
+          skuNameSnapshot: true,
+          unitPriceCents: true,
+          quantity: true,
+          subtotalCents: true,
+        },
+      },
     },
   });
 

@@ -1,7 +1,7 @@
 import { apiRequest } from './client';
 import type { CustomerOrder } from '../types/ecommerce';
 
-const mockEnabled = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API !== 'false';
+const mockEnabled = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API === 'true';
 
 export function fetchMyOrders(token: string) {
   return apiRequest<{ orders: CustomerOrder[] }>('/api/me/orders', { token }).catch((error) => {

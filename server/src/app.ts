@@ -3,6 +3,8 @@ import express from 'express';
 import { config } from './config';
 import { errorHandler, notFoundHandler } from './http/errors';
 import { adminOrdersRouter } from './modules/admin/adminOrders.routes';
+import { adminPaymentMethodsRouter } from './modules/admin/adminPaymentMethods.routes';
+import { adminProductsRouter } from './modules/admin/adminProducts.routes';
 import { adminAuthRouter } from './modules/admin/auth.routes';
 import { adminUsersRouter } from './modules/admin/adminUsers.routes';
 import { auditLogsRouter } from './modules/admin/auditLogs.routes';
@@ -33,6 +35,8 @@ export function createApp() {
   app.use('/api/admin/users', adminUsersRouter);
   app.use('/api/admin/audit-logs', auditLogsRouter);
   app.use('/api/admin/orders', adminOrdersRouter);
+  app.use('/api/admin/products', adminProductsRouter);
+  app.use('/api/admin/payment-methods', adminPaymentMethodsRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);

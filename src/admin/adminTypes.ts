@@ -70,3 +70,38 @@ export type AdminOrderDetail = {
     } | null;
   }>;
 };
+
+export type AdminSku = {
+  id: string;
+  productId: string;
+  name: string;
+  spec: string;
+  priceCents: number;
+  originalPriceCents: number | null;
+  stock: number;
+  imageUrl: string | null;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AdminProduct = {
+  id: string;
+  name: string;
+  description: string | null;
+  status: 'ACTIVE' | 'INACTIVE';
+  createdAt: string;
+  updatedAt: string;
+  skus: AdminSku[];
+};
+
+export type AdminPaymentMethod = {
+  id: string;
+  type: 'WECHAT' | 'ALIPAY';
+  name: string;
+  qrCodeUrl: string;
+  instructions: string;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+};

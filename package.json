@@ -8,6 +8,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "db:up": "docker compose -p qingzhuo up -d postgres",
+    "db:down": "docker compose -p qingzhuo down",
     "server:dev": "tsx server/src/index.ts",
     "server:test": "vitest run server",
     "prisma:generate": "prisma generate",

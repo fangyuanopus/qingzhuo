@@ -112,6 +112,10 @@ export async function updateAdminOrderStatus(
       throw new HttpError(404, 'Order not found');
     }
 
+    if (input.status === OrderStatus.SHIPPING) {
+      throw new HttpError(400, 'Use the shipping endpoint to provide carrier and tracking details');
+    }
+
     assertTransition(order.status, input.status);
 
     const updated = await tx.order.update({
